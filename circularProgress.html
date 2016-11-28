@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas多彩圆形进度条</title>
+    <script type="text/javascript" src="plugin/jquery.js"></script>
+    <style>
+        .canvas_wrap{
+            position: relative;
+            width: 170px;
+            height: 170px;
+            margin: 300px 500px;
+            cursor: pointer;
+        }
+        canvas{
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            border-radius: 100px;
+            z-index: 3;
+        }
+        .wrap_radius{
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            border-radius: 100px;
+            background: #f1f1f1;
+            z-index: 1;
+        }
+        .notbuy_radius{
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            width: 160px;
+            height: 160px;
+            border-radius: 100px;
+            background: #d6d6d6;
+            box-shadow: inset 0 1px 4px rgba(6, 0, 1, 0.25);
+            z-index: 2;
+            behavior: url(plugin/ie-css3.htc);
+        }
+        .canvas_wrap .has_money{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 136px;
+            height: 104px;
+            margin: -68px 0 0 -68px;
+            padding-top: 32px;
+            text-align: center;
+            z-index: 15;
+        }
+        .canvas_wrap .has_money i{
+            font-size: 36px;
+            font-family: 'Arial';
+        }
+        .canvas_wrap .arrow {
+            position: absolute;
+            left: 50%;
+            top:  3px;
+            width: 0;
+            height: 0;
+            margin-left: -4px;
+            margin-bottom: -20px;
+            padding-bottom: 20px;
+            border-top: 8px solid #fff;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            opacity: 0;
+            z-index: 15;
+        }
+        .canvas_wrap .speed_list {
+            position: absolute;
+            left: 50%;
+            bottom: 167px;
+            width: 127px;
+            margin-left: -75px;
+            padding: 6px 0 6px 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(10, 2, 4, 0.1);
+            border: 1px solid #f0efef\0;
+            border-radius: 5px;
+            opacity: 0;
+            z-index: 14;
+        }
+        .canvas_wrap:hover .speed_list,
+        .canvas_wrap:hover .arrow {
+            opacity: 1;
+            -webkit-transition:  all 0.25s ease-in-out;
+            -o-transition:  all 0.25s ease-in-out;
+            transition:  all 0.25s ease-in-out;
+            -webkit-transform:  translateY(-3px);
+            -ms-transform:  translateY(-3px);
+            -o-transform:  translateY(-3px);
+            transform:  translateY(-3px);
+        }
+        .canvas_wrap .speed_list span {
+            display: block;
+            line-height: 20px;
+            color: #666;
+            text-align: left
+        }
+        .canvas_wrap .speed_list span .speed_present{
+        	float: right;
+        	padding-right:25px;
+        }
+        .canvas_wrap .speed_list span i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 12px;
+            vertical-align: middle
+        }
+        .canvas_wrap .speed_list span.speed_list1 i {
+            background-color: #e98d81
+        }
+        .canvas_wrap .speed_list span.speed_list2 i {
+            background-color: #8bcae7
+        }
+        .canvas_wrap .speed_list span.speed_list3 i {
+            background-color: #f5df7e
+        }
+        .canvas_wrap .speed_list span.speed_list4 i {
+            background-color: #f294b4
+        }
+        .canvas_wrap .speed_list span.speed_list5 i {
+            background-color: #90d6d4
+        }
+        .canvas_wrap .speed_list span.speed_list6 i {
+            background-color: #aab4e2
+        }
+        .canvas_wrap .speed_list span.speed_list7 i, .canvas_wrap .speed_list span.yichou_span i {
+            background-color: #b5de9e
+        }
+        .canvas_wrap .speed_list span.speed_list8 i, .canvas_wrap .speed_list span.weichou_span i {
+            background-color: #d6d6d6
+        }
+    </style>
+</head>
+<body>
+<div class="canvas_wrap">
+    <div class="wrap_radius"></div>
+    <div class="notbuy_radius"></div>
+    <canvas id="color_myCanvas" width="160" height="160"></canvas>
+
+    <!-- 领投 -->
+    <canvas id="lingtou_canvas" class="myCanvas_box" width="160" height="160"></canvas>
+    <!-- 跟投 -->
+    <canvas id="myCanvas6" class="myCanvas_box" width="160" height="160"></canvas>
+    <!-- 跟投 -->
+    <canvas id="myCanvas5" class="myCanvas_box" width="160" height="160"></canvas>
+    <!-- 跟投 -->
+    <canvas id="myCanvas4" class="myCanvas_box" width="160" height="160"></canvas>
+    <!-- 跟投 -->
+    <canvas id="myCanvas3" class="myCanvas_box" width="160" height="160"></canvas>
+    <!-- 跟投 -->
+    <canvas id="myCanvas2" class="myCanvas_box" width="160" height="160"></canvas>
+    <!-- 已筹 -->
+    <canvas id="myCanvas1" class="myCanvas_box" width="160" height="160"></canvas>
+
+    <canvas id="slide_myCanvas" width="160" height="160"></canvas>
+    <canvas id="wrap_myCanvas" width="160" height="160"></canvas>
+    <span class="has_money"><i>50</i>万<br />已筹</span>
+    <i class="arrow"></i>
+    <div class="speed_list">
+        <!-- 领投 -->
+        <span class="speed_list1" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+        <!-- 跟投 -->
+        <span class="speed_list2" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+        <!-- 跟投 -->
+        <span class="speed_list3" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+        <!-- 跟投 -->
+        <span class="speed_list4" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+        <!-- 跟投 -->
+        <span class="speed_list5" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+        <!-- 跟投 -->
+        <span class="speed_list6" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+        <!-- 已筹 -->
+        <span class="speed_list7" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+        <!-- 未筹 -->
+        <span class="speed_list8" style="display:none;"><i></i><em class="speed_name"></em><em class="speed_present"></em></span>
+    </div>
+</div>
+<script>
+var dataLength = 8,//数据长度
+    sDeg,	   //圆起点坐标
+    eDeg,      //圆终点坐标
+    eDegList = [], //圆终点坐标集合
+    domList =[],   //画布dom集合
+    colorList =["#e98d81","#8ccae7","#f5df7e","#f297b5","#91d6d4","#aab4e2","#b6dfa0"],//色块颜色集合
+    dataList = ["30%","10%","10%","10%","10%","10%","15%","5%"],
+    dataName = ["领投","跟投","跟投","跟投","跟投","跟投","已筹","未筹"];
+
+//浮动窗口数据显示隐藏
+for(var num = 0; num < dataLength; num++){
+	$('.canvas_wrap .speed_list span').eq(num).show();
+	$('.canvas_wrap .speed_list span').eq(num).find('.speed_name').html(dataList[num]);
+	$('.canvas_wrap .speed_list span').eq(num).find('.speed_present').html(dataName[num]);
+}
+$('.canvas_wrap .speed_list span').eq(dataLength-1).addClass('weichou_span');
+$('.canvas_wrap .speed_list span').eq(dataLength-2).addClass('yichou_span');
+
+//定义画布
+domList[1] = document.getElementById('myCanvas1').getContext('2d');//投影
+domList[2] = document.getElementById('myCanvas2').getContext('2d');
+domList[3] = document.getElementById('myCanvas3').getContext('2d');
+domList[4] = document.getElementById('myCanvas4').getContext('2d');
+domList[5] = document.getElementById('myCanvas5').getContext('2d');
+domList[6] = document.getElementById('myCanvas6').getContext('2d');
+domList[7] = document.getElementById('lingtou_canvas').getContext('2d');
+var color_ctx = document.getElementById('color_myCanvas').getContext('2d');//色块
+var slide_ctx = document.getElementById('slide_myCanvas').getContext('2d');//斜线
+var wrap_ctx = document.getElementById('wrap_myCanvas').getContext('2d');//顶部白色圆
+
+//扇形
+CanvasRenderingContext2D.prototype.sector = function (x, y, radius, sDeg, eDeg) {
+    // 初始保存
+    this.save();
+    // 位移到目标点
+    this.translate(x, y);
+    this.beginPath();
+    // 画出圆弧(true为逆时针)
+    this.arc(0,0,radius,sDeg, eDeg ,true);
+    // 再次保存以备旋转
+    this.save();
+    // 旋转至起始角度
+    this.rotate(eDeg);
+    // 移动到终点，准备连接终点与圆心
+    this.moveTo(radius,0);
+    // 连接到圆心
+    this.lineTo(0,0);
+    // 还原
+    this.restore();
+    // 旋转至起点角度
+    this.rotate(sDeg);
+    // 从圆心连接到起点
+    this.lineTo(radius,0);
+    this.closePath();
+    // 还原到最初保存的状态
+    this.restore();
+    return this;
+}
+
+var deg = Math.PI/180;
+
+//色块投影
+function colorShadowFn(shadowDom,color,sDeg,eDeg){
+    shadowDom.shadowOffsetX = 1;
+    shadowDom.shadowOffsetY = 1;
+    shadowDom.shadowColor = 'rgba(6, 0, 1, 0.2)';
+    shadowDom.shadowBlur = 10;
+    shadowDom.fillStyle= color;
+    shadowDom.sector(80,79,80,sDeg*deg,eDeg*deg).fill();
+}
+
+//环形色块
+function colorBoxFn(colorDom,color,sDeg,eDeg){
+    colorDom.fillStyle=color;
+    colorDom.sector(80,80,80,sDeg*deg,eDeg*deg).fill();
+}
+
+//斜线平铺
+var img = new Image();
+img.src = "images/slide.png";
+img.onload = function () {
+    var pattern = slide_ctx.createPattern(img, "repeat");
+    slide_ctx.fillStyle = pattern;
+    function slideRepFn(slideDom,sDeg,eDeg){
+        slideDom.sector(80,80,80,sDeg*deg,eDeg*deg).fill();
+    }
+
+    function canvasDo(shadowDom,colorDom,slideDom,color,sDeg,eDeg){
+        colorShadowFn(shadowDom,color,sDeg,eDeg);//色块投影
+        colorBoxFn(colorDom,color,sDeg,eDeg);//环形色块
+        slideRepFn(slideDom,sDeg,eDeg);//斜线平铺
+    }
+
+    if(dataLength < 3){//支持人数
+        sDeg = -90;
+        eDeg = -90+(360-360*parseInt(dataList[0])/100);
+        canvasDo(domList[1],color_ctx,slide_ctx,colorList[6],sDeg,eDeg);
+    }
+    if(dataLength >= 3 && dataLength < 4){//0人跟投
+    	//领投
+        sDeg = -90;
+        eDeg = -90+(360-360*parseInt(dataList[0])/100);
+        canvasDo(domList[1],color_ctx,slide_ctx,colorList[0],sDeg,eDeg);
+
+        //已筹
+        sDeg = -90+(360-360*parseInt(dataList[0])/100);
+        eDeg = -90+(360-(360*parseInt(dataList[0])/100+360*parseInt(dataList[1])/100));
+        canvasDo(domList[2],color_ctx,slide_ctx,colorList[6],sDeg,eDeg);
+    }
+    if(dataLength >= 4 && dataLength < 9){//跟投人数大于1
+    	//领投
+        sDeg = -90;
+        eDeg = -90+(360-360*parseInt(dataList[0])/100);
+        canvasDo(domList[1],color_ctx,slide_ctx,colorList[0],sDeg,eDeg);
+        eDegList.push(eDeg);
+        for(var i = 0; i < dataLength-3; i++){
+        	sDeg = eDegList[i];
+        	eDeg = sDeg-(360*parseInt(dataList[i+1])/100);
+        	eDegList.push(eDeg);
+            canvasDo(domList[i+1],color_ctx,slide_ctx,colorList[i+1],sDeg,eDeg);
+        }
+        //已筹
+        sDeg = eDegList[eDegList.length-1]
+        eDeg = sDeg-(360*parseInt(dataList[i+1])/100);
+        canvasDo(domList[dataLength-1],color_ctx,slide_ctx,colorList[6],sDeg,eDeg);
+    }
+}
+
+//中间白色圆环
+wrap_ctx.save();
+//投影
+wrap_ctx.shadowOffsetX = 0;
+wrap_ctx.shadowOffsetY = 1;
+wrap_ctx.shadowColor = 'rgba(6, 0, 1, 0.5)';
+wrap_ctx.shadowBlur = 6;
+
+//渐变
+var grd=wrap_ctx.createRadialGradient(80,80,30,80,80,80);
+grd.addColorStop(0.4,"#fff");
+grd.addColorStop(1,"#f1f1f1");
+wrap_ctx.fillStyle = grd;
+
+wrap_ctx.beginPath();
+wrap_ctx.sector(80,80,68,0,2*Math.PI);
+wrap_ctx.fill()
+wrap_ctx.restore();
+
+</script>
+
+</body>
+</html>
